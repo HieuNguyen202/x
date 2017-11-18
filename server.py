@@ -1,15 +1,21 @@
 from Com import *
 from queue import Queue
-q = Queue()
-s = Com("192.168.0.4",12344, q)
-s.bind()
-s.start()
+from collector import *
+from gui import *
 
-i = 0
-while i < 1000:
-    if q.empty():
-        pass
-    else:
-        print(q.get())
-        i += 1
-print("exited")
+sq = Queue()
+rq = Queue()
+
+sender = Com(isServer = True, isSender = True, host = "192.168.0.4", port = 6789, q = sq)
+receiver = Com(isServer = True, isSender = False, host = "192.168.0.4", port = 1234, q = rq)
+
+g = GUI(rq)
+c = Collector(sq)
+
+g.start()
+c.start()
+
+sender.bind()
+receiver.bind()
+sender.start()
+receiver.start()
