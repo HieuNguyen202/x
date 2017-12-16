@@ -1,21 +1,27 @@
-from Com import *
+from tcp import *
+from i2c import *
 from queue import Queue
-from collector import *
-from gui import *
+from struct import Struct
+import time
 
 sq = Queue()
 rq = Queue()
-
-sender = Com(isServer = True, isSender = True, host = "192.168.0.4", port = 6789, q = sq)
-receiver = Com(isServer = True, isSender = False, host = "192.168.0.4", port = 1234, q = rq)
-
-g = GUI(rq)
-c = Collector(sq)
-
-g.start()
-c.start()
+sStruct = Struct('B'*32)
+rStruct = Struct('B'*32)
+sender = TCP(isServer = True, isSender = True, host = "192.168.0.25", port = 6789, q = sq)
+receiver = TCP(isServer = True, isSender = False, host = "192.168.0.25", port = 1234, q = rq)
+arduino = I2C(slaveAddress=7)
 
 sender.bind()
 receiver.bind()
 sender.start()
 receiver.start()
+
+while True:
+    data = arduino.read(32)
+    sq.put(sStruct.pack(*data))
+    time.sleep(1)
+    while not rq.empty():
+        print(rq.get())
+
+
