@@ -14,6 +14,7 @@ class TCP(socket.socket, threading.Thread):
         self.running = True
         self.isServer = isServer
         self.isSender = isSender
+        self.mLen = 3 #message length in number of bytes
 
     def run(self):
         while self.running:
@@ -26,20 +27,21 @@ class TCP(socket.socket, threading.Thread):
                     if not self.q.empty():
                         try:
                             self.client.send(self.q.get())
+                            self.q.task_done()
                         except:
                             break
                     else:
-                        time.sleep(0.5)
+                        time.sleep(0.0001)
             else:
                 while self.running:
                     try:
-                        data = self.client.recv(32)
+                        data = self.client.recv(1024)
                     except ConnectionResetError:
                         print("connection reset error")
                         break
                     if not data: break
-                    for i in range(0, len(data), 32):
-                        self.q.put(data[i:i+32])
+                    for i in range(0, len(data), self.mLen):
+                        self.q.put(data[i:i+self.mLen])
                 self.client.close()
 
     def listen(self):

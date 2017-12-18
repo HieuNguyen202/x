@@ -20,12 +20,11 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="robot.py" />
     <Compile Include="client.py" />
-    <Compile Include="collector.py" />
     <Compile Include="tcp.py" />
     <Compile Include="gui.py" />
-    <Compile Include="i2c.py" />
-    <Compile Include="main.py" />
+    <Compile Include="arduino.py" />
     <Compile Include="server.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

@@ -1,40 +1,57 @@
 from tcp import *
 from queue import Queue
-from collector import *
 from gui import *
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from struct import Struct
+from robot import Robot
+
+"""
+Commands:
+    1: drive motors
+
+"""
+
 
 sq = Queue()
 rq = Queue()
 app = QtWidgets.QApplication(sys.argv)
 gui = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
-sStruct = Struct('B'*32)
+struct = Struct('BBb')
+robot = Robot(sq, rq)
+
+pressedButton = -1
 
 def initGUI():    
     ui.setupUi(gui)
-    guiTimer = QtCore.QTimer()
-    guiTimer.timeout.connect(updateRobotInfo)
-    guiTimer.start(1000)
-    commandTimer = QtCore.QTimer()
-    commandTimer.timeout.connect(sendCommand)
-    commandTimer.start(1000)
+    #guiTimer = QtCore.QTimer()
+    #guiTimer.timeout.connect(updateRobotInfo)
+    #guiTimer.start(1000)
+    #commandTimer = QtCore.QTimer()
+    #commandTimer.timeout.connect(tcpTest)
+    #commandTimer.start(1000)
 
-    ui.pushButtonForward.pressed.connect(forward)
-    ui.pushButtonForward.released.connect(stop)
-    ui.pushButtonReverse.pressed.connect(reverse)
-    ui.pushButtonReverse.released.connect(stop)
+    #Connect signals
+    ui.pushButtonForward.pressed.connect(forwardPressed)
+    ui.pushButtonForward.released.connect(forwardReleased)
+    ui.pushButtonReverse.pressed.connect(reversePressed)
+    ui.pushButtonReverse.released.connect(reverseReleased)
     ui.pushButtonStop.pressed.connect(stop)
     ui.actionConnect.triggered.connect(initTCP)
     ui.sliderSpeedControl.valueChanged.connect(lineEditUpdateSpeed)
-    ui.lineEditMotorSpeed.setText("100")
+
+    app.aboutToQuit.connect(close)
+    currentSliderValue = str(ui.sliderSpeedControl.value())
+    ui.lineEditMotorSpeed.setText(currentSliderValue)
+
+    initTCP() #auto connect at startup
+
     gui.show()
     sys.exit(app.exec_())
 
 count = 0
-def sendCommand():
+def tcpTest():
     global count
     data = [count]*32
     sq.put(sStruct.pack(*data))
@@ -42,14 +59,10 @@ def sendCommand():
     if count > 128:
         count = 0
 
-def updateRobotInfo():
-    while not rq.empty():
-        print(rq.get())
-
-def hieu():
-    print("hieu")
 
 def initTCP():
+    global sender
+    global receiver
     sender = TCP(isServer = False, isSender = True, host = "192.168.0.25", port = 1234, q = sq)
     receiver = TCP(isServer = False, isSender = False, host = "192.168.0.25", port = 6789, q = rq)
     sender.start()
@@ -58,23 +71,50 @@ def initTCP():
 def lineEditUpdateSpeed(speed):
     speed = str(speed)
     ui.lineEditMotorSpeed.setText(speed)
+    if pressedButton == -1:
+        reversePressed()
+    elif pressedButton == 1:
+        forwardPressed()
+    else:
+        pass
 
+def forwardPressed():
+    global pressedButton
+    power = ui.sliderSpeedControl.value()
+    robot.motor(motorID = 1, power = power)
+    pressedButton = 1
 
-def forward():
-    speed = ui.sliderSpeedControl.value()
-    tcpSend(1,speed)
+def reversePressed():
+    global pressedButton
+    power = ui.sliderSpeedControl.value()
+    robot.motor(motorID = 1, power = - power)
+    pressedButton = -1
 
-def reverse():
-    speed = ui.sliderSpeedControl.value()
-    tcpSend(2,speed)
+def forwardReleased():
+    if not ui.checkBoxStickyMode.isChecked():
+        stop()
+
+def reverseReleased():
+    if not ui.checkBoxStickyMode.isChecked():
+        stop()  
 
 def stop():
-    tcpSend(0,0)
+    global pressedButton
+    robot.motor(motorID = 1, power = 0)
+    pressedButton = 0
 
-def tcpSend(command, value):
-    m.update([command,value])
-    sq.put(m.encode('tcp'))
-
+def close():
+    stop()
+    while not rq.empty():
+        time.sleep(0.01)
+    while not sq.empty():
+        time.sleep(0.01)
+    sender.running = False
+    receiver.running = False
+    sender.join()
+    receiver.join()
+    app.exit()
+    sys.exit()
 initGUI()
 
 

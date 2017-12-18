@@ -1,5 +1,5 @@
+#include <Sabertooth.h>
 #include <Wire.h>
-#include <Adafruit_MotorShield.h>
 /*
 RPI               Arduino Uno		Arduino Mega
 --------------------------------------------
@@ -8,74 +8,49 @@ GPIO 3 (SCL) <--> Pin A5 (SCL)		Pin 21 (SCL)	Yellow
 Ground       <--> Ground			Ground			Black
 */
 
+Sabertooth ST(128);
 #define I2CAddress 7
-//Adafruit_MotorShield AFMS = Adafruit_MotorShield();
-//Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
-//int command = 2;
-//int speed = 0;
-int val = 0;
 
+int val = -127;
 
 void setup()
 {
 	Serial.begin(9600);
-	Serial.println("started");
+	SabertoothTXPinSerial.begin(9600);
+	ST.autobaud();
 	I2CTestSetup();
-	//MotorSetup();
 }
 void loop()
 {
-	//Wire.requestFrom(8, 32);
+
 }
+
 void I2CTestSetup()
 {
 	Wire.begin(I2CAddress);
-	Wire.setClock(100000L);
+	Wire.setClock(300000L);
 	Wire.onReceive(onI2CReceive);
 	Wire.onRequest(onI2CRequest);
 }
-void I2CTestLoop() {
-}
 
-void MotorSetup()
-{
-	//AFMS.begin();  // create with the default frequency 1.6KHz
-	//myMotor->run(FORWARD);
-}
-void MotorLoop()
-{
-	//Serial.println(String(command) + " " + String(speed));
-	
-	//delay(200);
-}
-
-void drive()
-{
-	//switch (command)
-	//{
-	//case 1:
-	//	myMotor->run(FORWARD);
-	//	break;
-	//case 2:
-	//	myMotor->run(BACKWARD);
-	//	break;
-	//default:
-	//	break;
-	//}
-	//myMotor->setSpeed(speed);
-}
 void onI2CReceive(int byteCount) {
-	int message[2];
+	int message[3];
 	int i = 0;
 	while (Wire.available()) {
 		message[i] = Wire.read();
 		i++;
 	}
-	//for (int i = 0; i < 32; i++)
-	//{
-	//	Serial.println(message[i]);
-	//}
+	int command = message[0];
+	switch (command)
+	{
+	case 1:
+		ST.motor(message[1], (signed char)message[2]); //motorID = message[1]; motorPower = message[2]
+		break;
+	default:
+		break;
+	}
 }
+
 void onI2CRequest() {//fix this
 	for (int i = 0; i < 32; i++)
 	{
