@@ -7,9 +7,6 @@ import smbus as smbus
 commands:
 1: drive motors
 """
-
-
-
 import smbus2
 class Arduino(smbus2.SMBus):
     """
@@ -22,7 +19,6 @@ class Arduino(smbus2.SMBus):
         Args:
             i2cAddess: i2c address of the target Arduino.
         '''
-
         super().__init__(1)
         self.i2cAddress=i2cAddress
 

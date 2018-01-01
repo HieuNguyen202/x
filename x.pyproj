@@ -20,12 +20,18 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="constants.py" />
     <Compile Include="robot.py" />
     <Compile Include="client.py" />
+    <Compile Include="server.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tcp.py" />
     <Compile Include="gui.py" />
     <Compile Include="arduino.py" />
-    <Compile Include="server.py" />
+    <Compile Include="TCPWithiPad.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

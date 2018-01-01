@@ -7,24 +7,42 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "x", "x.pyproj", "{C7F3C1DA-
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "arduino", "arduino\arduino.vcxproj", "{C5F80730-F44F-4478-BDAE-6634EFC2CA88}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lidar", "..\lidar\lidar.vcxproj", "{66410CF3-F3C2-4EDE-834E-701C5BD8E772}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C7F3C1DA-405E-478D-AA82-5538E429488E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F3C1DA-405E-478D-AA82-5538E429488E}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{C7F3C1DA-405E-478D-AA82-5538E429488E}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{C7F3C1DA-405E-478D-AA82-5538E429488E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F3C1DA-405E-478D-AA82-5538E429488E}.Release|x64.ActiveCfg = Release|Any CPU
 		{C7F3C1DA-405E-478D-AA82-5538E429488E}.Release|x86.ActiveCfg = Release|Any CPU
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x64.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.ActiveCfg = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Debug|x86.Build.0 = Debug|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|Any CPU.ActiveCfg = Release|Win32
+		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x64.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.ActiveCfg = Release|Win32
 		{C5F80730-F44F-4478-BDAE-6634EFC2CA88}.Release|x86.Build.0 = Release|Win32
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Debug|x64.ActiveCfg = Debug|x64
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Debug|x64.Build.0 = Debug|x64
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Debug|x86.ActiveCfg = Debug|Win32
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Debug|x86.Build.0 = Debug|Win32
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Release|Any CPU.ActiveCfg = Release|Win32
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Release|x64.ActiveCfg = Release|x64
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Release|x64.Build.0 = Release|x64
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Release|x86.ActiveCfg = Release|Win32
+		{66410CF3-F3C2-4EDE-834E-701C5BD8E772}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

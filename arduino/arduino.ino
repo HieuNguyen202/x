@@ -12,13 +12,19 @@ Sabertooth ST(128);
 #define I2CAddress 7
 
 int val = -127;
+long count = 0;
 
 void setup()
 {
 	Serial.begin(9600);
 	SabertoothTXPinSerial.begin(9600);
 	ST.autobaud();
+	ST.motor(1, 0);
 	I2CTestSetup();
+	pinMode(8, INPUT_PULLUP);
+	pinMode(9, INPUT_PULLUP);
+	//attachInterrupt(digitalPinToInterrupt(8), print, CHANGE);
+	//attachInterrupt(digitalPinToInterrupt(9), print, CHANGE);
 }
 void loop()
 {
@@ -28,7 +34,7 @@ void loop()
 void I2CTestSetup()
 {
 	Wire.begin(I2CAddress);
-	Wire.setClock(300000L);
+	Wire.setClock(400000L);
 	Wire.onReceive(onI2CReceive);
 	Wire.onRequest(onI2CRequest);
 }
@@ -40,6 +46,7 @@ void onI2CReceive(int byteCount) {
 		message[i] = Wire.read();
 		i++;
 	}
+	
 	int command = message[0];
 	switch (command)
 	{
@@ -61,5 +68,11 @@ void onI2CRequest() {//fix this
 	{
 		val = 0;
 	}
+}
+
+void print()
+{
+	//Serial.println(count);
+	//count++;
 }
 
