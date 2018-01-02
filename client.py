@@ -12,7 +12,7 @@ from tcp import Robot
 app = QtWidgets.QApplication(sys.argv)
 gui = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
-robot = None
+robot = Robot(ipAddress = "192.168.0.6")
 
 pressedButton = 0
 
@@ -72,15 +72,6 @@ def reverseReleased():
         stop()  
 
 def connect():
-    global robot
-    if robot is not None:
-        sq = robot.sq
-        rq = robot.rq
-        robot = Robot(ipAddress = "192.168.0.6")
-        #robot.sq = sq
-        #robot.rq = rq
-    else:
-        robot = Robot(ipAddress = "192.168.0.6")
     robot.start()
 
 def stop():

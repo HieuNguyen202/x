@@ -16,8 +16,8 @@ while 1:
     while 1:
         data = conn.recv(BUFFER_SIZE)
         if not data: break
-        for i in range(0, len(data), 3):
-            print(Struct.unpack("BBb", data[i: i+3]))
+        for i in range(0, len(data), 4):
+            print(Struct.unpack("BBbB", data[i: i+4]))
             #print("received data:", )
            # print(data)
     conn.close()
