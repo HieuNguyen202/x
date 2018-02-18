@@ -8,11 +8,10 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from tcp import Robot
 
-
 app = QtWidgets.QApplication(sys.argv)
 gui = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
-robot = Robot(ipAddress = "192.168.0.6")
+robot = Robot(ipAddress = "127.0.0.1")
 
 pressedButton = 0
 
@@ -54,13 +53,13 @@ def lineEditUpdateSpeed(speed):
 def forwardPressed():
     global pressedButton
     value = ui.sliderSpeedControl.value()
-    robot.motor(device = 1, value = value)
+    robot.motor(device = 1,value1 = value, value2 = 0)
     pressedButton = 1
 
 def reversePressed():
     global pressedButton
     value = ui.sliderSpeedControl.value()
-    robot.motor(device = 1, value = -value)
+    robot.motor(device = 1, value1 = -value, value2 = 0)
     pressedButton = -1
 
 def forwardReleased():
@@ -76,7 +75,7 @@ def connect():
 
 def stop():
     global pressedButton
-    robot.motor(device = 1, value = 0)
+    robot.motor(device = 1, value1 = 0, value2 = 0)
     pressedButton = 0
 
 def close():

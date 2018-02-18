@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{c7f3c1da-405e-478d-aa82-5538e429488e}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>server.py</StartupFile>
+    <StartupFile>manual.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -21,14 +21,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="constants.py" />
-    <Compile Include="robot.py" />
     <Compile Include="client.py" />
+    <Compile Include="manual.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="manualGUI.py" />
     <Compile Include="server.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tcp.py" />
     <Compile Include="gui.py" />
-    <Compile Include="arduino.py" />
     <Compile Include="TCPWithiPad.py">
       <SubType>Code</SubType>
     </Compile>

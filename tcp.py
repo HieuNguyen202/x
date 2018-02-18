@@ -5,14 +5,6 @@ from struct import Struct
 from constants import *
 from queue import Queue
 
-#System commands:
-#    Command = 0
-#    device = 0 -> sender connected
-#             1 -> sender disconnected
-#             2 -> receiver connected
-#             3 -> receiver disconnected
-#    Value = the ip address of the target
-
 class TCP(socket.socket, threading.Thread):
     'Communication between two devices using python'
     def __init__(self, host, port, q):
@@ -141,23 +133,22 @@ class TCPServerSender(TCPServer):
     def checkLocalQ(self):
         while not self.localInQ.empty():
             signal = self.localInQ.get()
-            if signal[0] == 0: #make sure its a system command
-                if signal[1] == 2: #receiver got a connection
+            if signal[0] == SYSTEM and signal[1] == TCP_STATUS : #make sure its a system command
+                if signal[2] == RECEIVER_CONNECTED: #receiver got a connection
                     self.receiverHasClient = True
-                elif signal[1] == 3: #receiver lost its connection
+                elif signal[2] == RECEIVER_DISCONNECTED: #receiver lost its connection
                     self.receiverHasClient = False
                     self.clean() #abort my connection
-
 
     def connected(self):
         self.hasClient = True #tell itself it has a client
         if hasattr(self, 'clientAddress'):
-            self.localOutQ.put([0, 0, int(self.clientAddress[0].split('.')[3])]) #tell receiver it has a client
+            self.localOutQ.put([SYSTEM, TCP_STATUS, SENDER_CONNECTED, int(self.clientAddress[0].split('.')[3])]) #tell receiver it has a client
 
     def disconnected(self):
         self.hasClient = False #tell itself it has a client
         if hasattr(self, 'clientAddress'):
-            self.localOutQ.put([0, 1, int(self.clientAddress[0].split('.')[3])]) #tell receiver it has a client
+            self.localOutQ.put([SYSTEM, TCP_STATUS, SENDER_DISCONNECTED, int(self.clientAddress[0].split('.')[3])]) #tell receiver it has a client
 
 class TCPServerReceiver(TCPServer):
     'Communication between two devices using python'
@@ -177,27 +168,27 @@ class TCPServerReceiver(TCPServer):
     def checkLocalQ(self):
         while not self.localInQ.empty():
             signal = self.localInQ.get()
-            if signal[0] == 0: #make sure its a system command
-                if signal[1] == 0: #sender got a connection
+            if signal[0] == SYSTEM and signal[1] == TCP_STATUS: #make sure its a system command
+                if signal[2] == SENDER_CONNECTED: #sender got a connection
                     self.senderHasClient = True
                     if hasattr(self, 'clientAddress'):
-                        self.q.put(self.pack([0, 0, int(self.clientAddress[0].split('.')[3])])) #tell the outside world sender have client
-                elif signal[1] == 1: #sender lost its connection
+                        self.q.put(self.pack([SYSTEM, TCP_STATUS, SENDER_CONNECTED, int(self.clientAddress[0].split('.')[3])])) #tell the outside world sender have client
+                elif signal[2] == SENDER_DISCONNECTED: #sender lost its connection
                     self.senderHasClient = False
                     if hasattr(self, 'clientAddress'):
-                        self.q.put(self.pack([0, 1, int(self.clientAddress[0].split('.')[3])])) #tell the outside world sender lost a client
+                        self.q.put(self.pack([SYSTEM, TCP_STATUS, SENDER_DISCONNECTED, int(self.clientAddress[0].split('.')[3])])) #tell the outside world sender lost a client
 
     def connected(self):
         self.hasClient = True #tell itself it has a client
         if hasattr(self, 'clientAddress'):
-            self.localOutQ.put([0, 2, int(self.clientAddress[0].split('.')[3])]) #tell sender it has a client
-            self.q.put(self.pack([0, 2, int(self.clientAddress[0].split('.')[3])])) #tell the outside world i have client
+            self.localOutQ.put([SYSTEM, TCP_STATUS, RECEIVER_CONNECTED, int(self.clientAddress[0].split('.')[3])]) #tell sender it has a client
+            self.q.put(self.pack([SYSTEM, TCP_STATUS, RECEIVER_CONNECTED, int(self.clientAddress[0].split('.')[3])])) #tell the outside world i have client
         
     def disconnected(self):
         self.hasClient = False #tell itself it has a client
         if hasattr(self, 'clientAddress'):
-            self.localOutQ.put([0, 3, int(self.clientAddress[0].split('.')[3])]) #tell sender it has a client
-            self.q.put(self.pack([0, 3, int(self.clientAddress[0].split('.')[3])])) #tell the outside world i have client
+            self.localOutQ.put([SYSTEM, TCP_STATUS, RECEIVER_DISCONNECTED, int(self.clientAddress[0].split('.')[3])]) #tell sender it has a client
+            self.q.put(self.pack([SYSTEM, TCP_STATUS, RECEIVER_DISCONNECTED, int(self.clientAddress[0].split('.')[3])])) #tell the outside world i have client
 
 class TCPClient(TCP):
     'Communication between two devices using python'
@@ -249,20 +240,20 @@ class TCPClientSender(TCPClient):
     def checkLocalQ(self):
         while not self.localInQ.empty():
             signal = self.localInQ.get()
-            if signal[0] == 0: #make sure its a system command
-                if signal[1] == 2: #receiver got a connection
+            if signal[0] == SYSTEM and signal[1] == TCP_STATUS: #make sure its a system command
+                if signal[2] == RECEIVER_CONNECTED: #receiver got a connection
                     self.receiverHasClient = True
-                elif signal[1] == 3: #receiver lost its connection
+                elif signal[2] == RECEIVER_DISCONNECTED: #receiver lost its connection
                     self.receiverHasClient = False
                     self.stop()
 
     def connected(self):
         self.hasClient = True #tell itself it has a client
-        self.localOutQ.put([0, 0, int(self.host.split('.')[3])]) #tell receiver it has a client
+        self.localOutQ.put([SYSTEM, TCP_STATUS, SENDER_CONNECTED, int(self.host.split('.')[3])]) #tell receiver it has a client
 
     def disconnected(self):
         self.hasClient = False #tell itself it has a client
-        self.localOutQ.put([0, 1, int(self.host.split('.')[3])])
+        self.localOutQ.put([SYSTEM, TCP_STATUS, SENDER_DISCONNECTED, int(self.host.split('.')[3])])
 
 class TCPClientReceiver(TCPClient):
     'Communication between two devices using python'
@@ -287,26 +278,26 @@ class TCPClientReceiver(TCPClient):
     def checkLocalQ(self):
         while not self.localInQ.empty():
             signal = self.localInQ.get()
-            if signal[0] == 0: #make sure its a system command
-                if signal[1] == 0: #sender got a connection
+            if signal[0] == SYSTEM and signal[1] == TCP_STATUS: #make sure its a system command
+                if signal[2] == SENDER_CONNECTED: #sender got a connection
                     self.senderHasClient = True
                     print("serder has client to true")
-                    self.q.put(self.pack([0, 0, int(self.host.split('.')[3])])) #tell the outside world sender have client
-                elif signal[1] == 1: #sender lost its connection
+                    self.q.put(self.pack([SYSTEM, TCP_STATUS, SENDER_CONNECTED, int(self.host.split('.')[3])])) #tell the outside world sender have client
+                elif signal[2] == SENDER_DISCONNECTED: #sender lost its connection
                     self.senderHasClient = False
-                    self.q.put(self.pack([0, 1, int(self.host.split('.')[3])])) #tell the outside world sender lost a client
+                    self.q.put(self.pack([SYSTEM, TCP_STATUS, SENDER_DISCONNECTED, int(self.host.split('.')[3])])) #tell the outside world sender lost a client
                     self.disconnected()
 
 
     def connected(self):
         self.hasClient = True #tell itself it has a client
-        self.localOutQ.put([0, 2, int(self.host.split('.')[3])]) #tell sender it has a client
-        self.q.put(self.pack([0, 2, int(self.host.split('.')[3])])) #tell the outside world i have client
+        self.localOutQ.put([SYSTEM, TCP_STATUS, RECEIVER_CONNECTED, int(self.host.split('.')[3])]) #tell sender it has a client
+        self.q.put(self.pack([SYSTEM, TCP_STATUS, RECEIVER_CONNECTED, int(self.host.split('.')[3])])) #tell the outside world i have client
         
     def disconnected(self):
         self.hasClient = False #tell itself it has a client
-        self.localOutQ.put([0, 3, int(self.host.split('.')[3])]) #tell sender it has a client
-        self.q.put(self.pack([0, 3, int(self.host.split('.')[3])])) #tell the outside world i have client
+        self.localOutQ.put([SYSTEM, TCP_STATUS, RECEIVER_DISCONNECTED, int(self.host.split('.')[3])]) #tell sender it has a client
+        self.q.put(self.pack([SYSTEM, TCP_STATUS, RECEIVER_DISCONNECTED, int(self.host.split('.')[3])])) #tell the outside world i have client
 
 class BiDirectionalTCP(object):
     """Multithreading implimentation of bi diractional TCP: sender and receiver."""
@@ -377,18 +368,25 @@ class BiDirectionalTCP(object):
 
 
 class Robot(BiDirectionalTCP):
+
     def __init__(self, ipAddress):
         super().__init__(ipAddress = ipAddress, isServer = False)
 
-    def motor(self, device, value):
-        self.send([1, device, value])
+    def motor(self, device, value1, value2):
+        self.send([MANUAL, device, value1, value2])
 
-    def getNewData(self): # only return valid data
+    def drive(self, drive, turn):
+        self.motor(DRIVE_AND_TURN, drive, turn)
+
+    def stopAll(self):
+        self.motor(STOP_ALL, 0, 0)
+
+    def getNewMessages(self): # only return valid data
         return self.newPackage(DATA_LENGTH)
 
 class Controller(BiDirectionalTCP):
     def __init__(self, ipAddress):
         super().__init__(ipAddress = ipAddress, isServer = True)
 
-    def getNewCommands(self): # only return valid data
+    def getNewMessages(self): # only return valid data
         return self.newPackage(COMMAND_LENGTH)

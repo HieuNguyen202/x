@@ -4,4 +4,9 @@
     <TargetProject>c7f3c1da-405e-478d-aa82-5538e429488e</TargetProject>
     <FriendlyName>x</FriendlyName>
   </ProjectTarget>
+  <Reports>
+    <Report>
+      <Filename>C:\Users\hn\AppData\Local\Temp\x_20180102.vsp</Filename>
+    </Report>
+  </Reports>
 </ProfilingTarget>
