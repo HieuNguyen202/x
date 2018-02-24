@@ -14,6 +14,10 @@ DATA =              3
 #Device when command = 0
 TCP_STATUS =        0
 
+#Device when command = 0 device = 0
+ALIVE =        0
+
+
 #Value 1 when command = 0 Device = 0
 SENDER_CONNECTED =          0
 SENDER_DISCONNECTED =       1

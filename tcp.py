@@ -381,6 +381,10 @@ class Robot(BiDirectionalTCP):
     def stopAll(self):
         self.motor(STOP_ALL, 0, 0)
 
+    def stillAlive(self):
+        self.send([SYSTEM, TCP_STATUS, ALIVE, 0])
+        
+    
     def getNewMessages(self): # only return valid data
         return self.newPackage(DATA_LENGTH)
 
