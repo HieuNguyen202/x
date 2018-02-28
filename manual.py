@@ -10,7 +10,7 @@ import _thread
 
 gear = [20, 40, 60, 80, 100]
 gearIndex = 0
-robot = Robot(ipAddress = "192.168.2.103")
+robot = Robot(ipAddress = "192.168.2.105")
 timer = QtCore.QTimer()
 timer.timeout.connect(robot.stillAlive)
 

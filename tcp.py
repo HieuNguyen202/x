@@ -373,6 +373,10 @@ class Robot(BiDirectionalTCP):
         super().__init__(ipAddress = ipAddress, isServer = False)
 
     def motor(self, device, value1, value2):
+        if value1 < 0:
+            value1 = 256 + value1
+        if value2 < 0:
+            value2 = 256 + value2
         self.send([MANUAL, device, value1, value2])
 
     def drive(self, drive, turn):

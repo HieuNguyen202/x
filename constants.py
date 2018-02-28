@@ -1,8 +1,8 @@
 COMMAND_PORT = 1234
 DATA_PORT = 5678
-COMMAND_STRUCTURE = 'BBbbB' # Command, device, value1, value2, checksum
+COMMAND_STRUCTURE = 'BBBBB' # Command, device, value1, value2, checksum
 COMMAND_LENGTH = len(COMMAND_STRUCTURE)
-DATA_STRUCTURE = 'BBbbB' # # Command, device, value1, value2, checksum
+DATA_STRUCTURE = 'BBBBB' # # Command, device, value1, value2, checksum
 DATA_LENGTH = len(DATA_STRUCTURE)
 
 #Commands
